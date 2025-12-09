@@ -163,7 +163,7 @@ import { Music2 } from "lucide-react"
 // Import types/helpers if needed
 // import { VirtualPiano } from "@/components/virtual-piano" // No longer needed here, it's inside ScorePlayer
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:5000"
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:5328"
 
 // Dynamically import ScorePlayer to avoid SSR issues with OSMD
 const ScorePlayer = dynamic(() => import('../components/score-player'), {
