@@ -1,5 +1,5 @@
 # Use Python 3.10 (Compatible with basic_pitch/music21)
-FROM python:3.10-slim
+FROM python:3.9-slim
 
 # Install system dependencies required for audio processing
 # libsndfile1 is CRITICAL for audio loading
