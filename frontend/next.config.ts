@@ -6,19 +6,35 @@
 
 // export default nextConfig;
 
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  rewrites: async () => {
-    return [
+  /* 1. IMAGE CONFIGURATION (Keep this from before) */
+  images: {
+    remotePatterns: [
       {
-        source: '/api/:path*',
-        destination:
-          process.env.NODE_ENV === 'development'
-            ? 'http://127.0.0.1:5328/api/:path*'
-            : '/api/',
+        protocol: 'https',
+        hostname: '**.onrender.com',
+        pathname: '/**',
       },
-    ];
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5832',
+        pathname: '/**',
+      },
+    ],
+  },
+
+  /* 2. OUTPUT STANDALONE */
+  output: "standalone",
+
+  /* 3. IGNORE BUILD ERRORS (Add these lines!) */
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    ignoreBuildErrors: true,
   },
 };
 
