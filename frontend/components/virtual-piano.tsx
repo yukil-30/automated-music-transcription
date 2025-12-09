@@ -113,53 +113,75 @@ export const VirtualPiano: React.FC<VirtualPianoProps> = ({ activeNotes }) => {
     return groupedKeys;
   }, []);
 
+  // Calculate key width based on number of white keys
+  const whiteKeyCount = keys.length;
+  const whiteKeyWidth = Math.max(12, 100 / whiteKeyCount); // percentage
+
   return (
-    <div className="fixed bottom-0 left-0 w-full h-48 bg-gray-900 z-50 flex border-t-4 border-gray-800">
-      {keys.map((group, index) => {
-        const isWhiteActive = activeNotes.includes(group.white.id);
-        const isBlackActive = group.black ? activeNotes.includes(group.black.id) : false;
+    <div className="fixed bottom-0 left-0 w-full bg-gray-900 z-50 border-t-4 border-gray-800 shadow-2xl" style={{ height: '180px' }}>
+      {/* Piano Header */}
+      <div className="px-4 pt-2 pb-1 flex items-center justify-between">
+        <h3 className="text-xs font-semibold text-white">Virtual Piano</h3>
+      </div>
+      
+      {/* Piano Keys Container */}
+      <div className="w-full h-full flex overflow-hidden">
+        {keys.map((group) => {
+          const isWhiteActive = activeNotes.includes(group.white.id);
+          const isBlackActive = group.black ? activeNotes.includes(group.black.id) : false;
 
-        return (
-          // RENDER WHITE KEY (Main Flex Item)
-          <div
-            key={group.white.id}
-            className={`
-              relative flex-grow 
-              border-l border-gray-300 first:border-l-0 /* Thin separator lines only */
-              rounded-b-sm 
-              transition-colors duration-75
-              ${isWhiteActive ? '!bg-blue-400' : 'bg-white'}
-            `}
-          >
-            {/* Optional: Label C notes */}
-            {group.white.id.startsWith('C') && (
-              <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-gray-400 font-bold select-none pointer-events-none">
-                {group.white.id}
-              </span>
-            )}
+          return (
+            // RENDER WHITE KEY (Main Flex Item)
+            <div
+              key={group.white.id}
+              className={`
+                relative flex-1 
+                border-l border-gray-400 first:border-l
+                rounded-b-sm 
+                transition-all duration-75
+                cursor-default
+                shadow-md
+                min-w-0
+                ${isWhiteActive 
+                  ? 'bg-gradient-to-b from-blue-300 to-blue-400 border-blue-500' 
+                  : 'bg-gradient-to-b from-white to-gray-100 hover:to-gray-200'
+                }
+              `}
+            >
+              {/* Optional: Label C notes */}
+              {group.white.id.startsWith('C') && (
+                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-gray-600 select-none pointer-events-none">
+                  {group.white.id}
+                </span>
+              )}
 
-            {/* RENDER BLACK KEY (Overlay) */}
-            {/* We position it absolutely on the right edge of the white key */}
-            {group.black && (
-              <div
-                className={`
-                  absolute z-10 top-0 -right-[30%] 
-                  w-[60%] h-[65%] 
-                  rounded-b-sm shadow-md
-                  transition-colors duration-75
-                  ${isBlackActive 
-                    ? '!bg-yellow-500 border border-yellow-600' 
-                    : 'bg-black border-x border-b border-gray-800'
-                  }
-                `}
-              >
-                {/* Highlight/Reflection for 3D effect */}
-                {!isBlackActive && <div className="w-[80%] h-[90%] mx-auto bg-gradient-to-b from-gray-700 to-black opacity-50 rounded-b-sm" />}
-              </div>
-            )}
-          </div>
-        );
-      })}
+              {/* RENDER BLACK KEY (Overlay) */}
+              {/* We position it absolutely on the right edge of the white key */}
+              {group.black && (
+                <div
+                  className={`
+                    absolute z-10 top-0 right-0
+                    w-[60%] h-[62%] 
+                    rounded-b-sm shadow-lg
+                    transition-all duration-75
+                    border-b-2
+                    transform translate-x-[35%]
+                    ${isBlackActive 
+                      ? 'bg-gradient-to-b from-yellow-300 to-yellow-400 border-yellow-500' 
+                      : 'bg-gradient-to-b from-gray-900 via-black to-gray-950 border-gray-950'
+                    }
+                  `}
+                >
+                  {/* 3D effect highlight */}
+                  {!isBlackActive && (
+                    <div className="absolute inset-x-1 top-0.5 h-1/4 bg-gradient-to-b from-gray-700 to-transparent opacity-30 rounded-t-sm" />
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

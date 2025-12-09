@@ -155,13 +155,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import dynamic from 'next/dynamic' // Import dynamic here
+import dynamic from 'next/dynamic'
 import { Card } from "@/components/ui/card"
 import { AudioUploader } from "@/components/audio-uploader"
 import { Music2 } from "lucide-react"
-
-// Import types/helpers if needed
-// import { VirtualPiano } from "@/components/virtual-piano" // No longer needed here, it's inside ScorePlayer
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:5328"
 
@@ -236,32 +233,68 @@ export default function MusicTranscriptionPage() {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-background pb-52"> {/* Added padding-bottom for the fixed piano */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4">
+  // If we have XML, show the player in a full-screen-like mode
+  if (musicXML) {
+    return (
+      <div className="h-screen w-screen flex flex-col bg-white overflow-hidden">
+        {/* Header with file info and back button */}
+        <div className="border-b border-gray-200 bg-gray-50 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-primary">
-              <Music2 className="size-6 text-primary-foreground" />
+            <Music2 className="w-6 h-6 text-primary" />
+            <div>
+              <h1 className="text-lg font-bold text-foreground">
+                {audioFile?.name || 'Sheet Music'}
+              </h1>
+              <p className="text-xs text-muted-foreground">
+                {selectedInstrument} • {simplifyRhythm ? 'Simplified' : 'Full rhythm'}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              setMusicXML(null)
+              setAudioFile(null)
+            }}
+            className="px-4 py-2 rounded text-sm font-medium text-foreground hover:bg-gray-200 transition-colors"
+          >
+            ← Back to Upload
+          </button>
+        </div>
+
+        {/* Main content area with score player */}
+        <div className="flex-1 overflow-hidden">
+          <ScorePlayer xmlData={musicXML} />
+        </div>
+      </div>
+    )
+  }
+
+  // Upload interface
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <header className="border-b border-border bg-white shadow-sm">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center gap-3">
+            <div className="flex size-12 items-center justify-center rounded-lg bg-primary">
+              <Music2 className="size-7 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Audio to Sheet Music</h1>
-              <p className="text-sm text-muted-foreground">Convert your audio files to sheet music notation</p>
+              <h1 className="text-3xl font-bold text-foreground">Audio to Sheet Music</h1>
+              <p className="text-sm text-muted-foreground">Convert your audio files to interactive sheet music</p>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid gap-6 lg:grid-cols-1">
+      <main className="container mx-auto px-4 py-12">
+        <div className="max-w-2xl mx-auto">
           {error && (
-            <div className="rounded-lg bg-destructive/10 border border-destructive/50 p-4">
+            <div className="rounded-lg bg-destructive/10 border border-destructive/50 p-4 mb-6">
               <p className="text-sm font-medium text-destructive">{error}</p>
             </div>
           )}
 
-          {/* Audio Upload Section */}
-          <Card className="p-6">
+          <Card className="p-8 shadow-lg">
             <AudioUploader
               onUpload={handleAudioUpload}
               isProcessing={isProcessing}
@@ -273,14 +306,6 @@ export default function MusicTranscriptionPage() {
               onSimplifyChange={setSimplifyRhythm}
             />
           </Card>
-
-          {/* Combined Sheet Music & Piano Player */}
-          {musicXML && (
-            <Card className="p-6">
-               {/* We pass the XML string directly to the player */}
-               <ScorePlayer xmlData={musicXML} />
-            </Card>
-          )}
         </div>
       </main>
     </div>
