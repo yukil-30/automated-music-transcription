@@ -1,9 +1,10 @@
 # Use Python 3.10 (Compatible with basic_pitch/music21)
-FROM python:3.9-slim
+FROM python:3.10
 
 # Install system dependencies required for audio processing
 # libsndfile1 is CRITICAL for audio loading
 RUN apt-get update && apt-get install -y \
+    build-essential \
     libsndfile1 \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
